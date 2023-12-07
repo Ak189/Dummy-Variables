@@ -1,0 +1,71 @@
+---
+title: "Question_2"
+author: "Akash Gupta"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 2
+
+First we will fit the Linear regression model.
+
+```{r cars}
+library(faraway)
+library(MASS)
+
+# Load the dataset
+data(savings)
+# View the structure of the dataset
+str(savings)
+
+# (1) Fit a linear regression model
+model <- lm(sr ~ pop15 + pop75 + dpi + ddpi, data = savings)
+model
+summary(model)
+#Examining the residuals
+residuals <- residuals(model)
+plot(residuals)
+abline(h = 0, col = "red", lty = 2)
+title("Residual Plot")
+
+```
+The residuals are as follows:
+Min -8.2422     
+1Q -2.6857  
+Median -0.2488      
+3Q 2.4280   
+Max 9.7509 
+
+## Including Plots
+
+
+```{r pressure, echo=FALSE}
+# (2) Find the best value of λ using the Box-Cox transformation
+# Box-Cox transformation for λ != 0
+lambda_values <- seq(-2, 2, by = 0.1)
+boxcox_result <- boxcox(model, lambda = lambda_values)
+
+# Find the optimal lambda
+optimal_lambda <- boxcox_result$x[which.max(boxcox_result$y)]
+cat("Optimal lambda:", optimal_lambda, "\n")
+
+# Box-Cox plot
+plot(boxcox_result)
+title("Box-Cox Transformation")
+# Ensure lambda_values and -boxcox_result$y have the same length
+lambda_values <- seq(-5, 5, by = 0.1)
+lambda_values <- lambda_values[1:length(boxcox_result$y)]
+
+
+```
+
+The optimal lambda comes out to be: 0.9494949 
+
+##Part(c):
+The main purpose of the Box-Cox plot is to help us identify the value of lambda that maximizes the log-likelihood. The optimal lambda corresponds to the peak of the plot, and it indicates the best power transformation for stabilizing the variance and improving the fit of the linear regression model.
+The plot provides a visual representation of how the log-likelihood changes across different lambda values. Examining the shape of the curve can give you insights into the nature of the transformation and its impact on the model's goodness of fit.
+
